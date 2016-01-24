@@ -5,9 +5,11 @@ import sys
 import urllib            # URL functions
 import urllib2           # URL functions
 import subprocess
+from energenie import switch_on, switch_off
+import RPi.GPIO as GPIO
 
 ################# Default Constants #################
-INTERVAL      = 10    # Delay between each reading (mins)
+INTERVAL      = 2    # Delay between each reading (mins)
 THINGSPEAKKEY = 'BKW4Q7PQGF3S18EG'
 THINGSPEAKURL = 'https://api.thingspeak.com/update'
 SENSOR = '/sys/bus/w1/devices/28-011590a84eff/w1_slave'
@@ -75,18 +77,27 @@ def main():
 	print "Date\tTime\tChip\tSensor\tthingspeak response"
 	sys.stdout.flush()
 
-	while True:
-		output = subprocess.check_output(['/opt/vc/bin/vcgencmd', 'measure_temp'])
-		chip_temp = float(output[5:9])
-		#print "Measured chip temperature {:.1f} C".format(chip_temp)
-		sens_temp = read_18b20()
-		#print "Measured 18b20 temperature {:.1f} C".format(sens_temp)
-		#print "Sending data..."
+	try:
+		while True:
+			output = subprocess.check_output(['/opt/vc/bin/vcgencmd', 'measure_temp'])
+			chip_temp = float(output[5:9])
+			#print "Measured chip temperature {:.1f} C".format(chip_temp)
+			sens_temp = read_18b20()
+			#print "Measured 18b20 temperature {:.1f} C".format(sens_temp)
+			if sens_temp >= 10:
+				switch_off(1)
+			else:
+				switch_on(1)
+			#print "Sending data..."
+			sys.stdout.flush()
+			sendData(THINGSPEAKURL,THINGSPEAKKEY,chip_temp,sens_temp)
+			#print "...sent."
+			sys.stdout.flush()
+			time.sleep(INTERVAL*60)
+
+	except KeyboardInterrupt:
+		GPIO.cleanup()
 		sys.stdout.flush()
-		sendData(THINGSPEAKURL,THINGSPEAKKEY,chip_temp,sens_temp)
-		#print "...sent."
-		sys.stdout.flush()
-		time.sleep(INTERVAL*60)
 
 
 if __name__=="__main__":
