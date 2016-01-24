@@ -13,6 +13,8 @@ def main():
 	APIKEY = '6VYHZF359E74W3C3'
 	TABLKBACK = 'https://api.thingspeak.com/talkbacks/5442/commands/execute'
 
+	time.sleep(120) # wait a couple of minutes for wifi to become active
+
 	print 'Entering command check loop'
 	sys.stdout.flush()
 
