@@ -84,7 +84,7 @@ def main():
 			#print "Measured chip temperature {:.1f} C".format(chip_temp)
 			sens_temp = read_18b20()
 			#print "Measured 18b20 temperature {:.1f} C".format(sens_temp)
-			if sens_temp >= 10:
+			if sens_temp >= 10.0:
 				switch_off(1)
 			else:
 				switch_on(1)

@@ -28,11 +28,13 @@ def main():
 			response.close()
 			if len(html_string) > 0:
 				if html_string == 'ON':
-					print 'I would turn ON'
+					print 'Switching ON'
+					switch_on(1)
 				elif html_string == 'OFF':
-					print 'I would turn OFF'
+					print 'Switching OFF'
+					switch_off(1)
 				else:
-					print 'Other: ' + html_string
+					print 'Ignoring: ' + html_string
 			sys.stdout.flush()
 			time.sleep(INTERVAL)
 
