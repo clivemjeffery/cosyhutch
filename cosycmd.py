@@ -16,20 +16,21 @@ def exec_next_command():
 	values = {'api_key' : APIKEY }
 	postdata = urllib.urlencode(values)
 	req = urllib2.Request(TALKBACK, postdata)
+	cmd = ''
 	try:	
 		response = urllib2.urlopen(req, None, 5)
 		cmd = response.read()
 		response.close()
-		return cmd		
 	except urllib2.HTTPError, e:
-		log = log + 'Server could not fulfill the request. Error code: ' + e.code
+		print 'Server could not fulfill the request. Error code: ' + e.code
 	except urllib2.URLError, e:
-		log = log + 'Failed to reach server. '
+		print 'Failed to reach server. '
 		if isinstance(e, basestring):
-			log = log  + e.reason
+			print e.reason
 	except:
-		log = log + 'Unknown error'
-	print log
+		print 'Unknown error'
+	return cmd		
+
 
 def main():
 
