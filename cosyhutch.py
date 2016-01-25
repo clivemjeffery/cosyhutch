@@ -13,6 +13,7 @@ INTERVAL      = 2    # Delay between each reading (mins)
 THINGSPEAKKEY = 'BKW4Q7PQGF3S18EG'
 THINGSPEAKURL = 'https://api.thingspeak.com/update'
 SENSOR = '/sys/bus/w1/devices/28-011590a84eff/w1_slave'
+LOCKFILE = '/home/pi/cosyhutch/cosy.lock'
 #####################################################
 
 def sendData(url,key,temp1,temp2):
@@ -81,17 +82,17 @@ def main():
 		while True:
 			output = subprocess.check_output(['/opt/vc/bin/vcgencmd', 'measure_temp'])
 			chip_temp = float(output[5:9])
-			#print "Measured chip temperature {:.1f} C".format(chip_temp)
 			sens_temp = read_18b20()
-			#print "Measured 18b20 temperature {:.1f} C".format(sens_temp)
 			if sens_temp >= 10.0:
 				switch_off(1)
-			else:
-				switch_on(1)
-			#print "Sending data..."
+			elif sens_temp < 8.0:
+				if os.path.isfile(LOCKFILE):
+					print 'Temperature below 8.0 and locked off.'
+				else:
+					print 'Temperature below 8.0 and switching on.'
+					switch_on(1)
 			sys.stdout.flush()
 			sendData(THINGSPEAKURL,THINGSPEAKKEY,chip_temp,sens_temp)
-			#print "...sent."
 			sys.stdout.flush()
 			time.sleep(INTERVAL*60)
 

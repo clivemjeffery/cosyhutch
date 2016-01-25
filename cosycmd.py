@@ -10,6 +10,7 @@ import RPi.GPIO as GPIO
 INTERVAL = 10    # Delay between each check (seconds)
 APIKEY = '6VYHZF359E74W3C3'
 TALKBACK = 'https://api.thingspeak.com/talkbacks/5442/commands/execute'
+LOCKFILE = '/home/pi/cosyhutch/cosy.lock'
 
 def exec_next_command():
 	values = {'api_key' : APIKEY }
@@ -35,8 +36,7 @@ def main():
 	global INTERVAL
 	global APIKEY
 	global TALKBACK
-	LOCKFILE = os.path.realpath(__file__)
-	LOCKFILE = LOCKFILE[:-len(__file__)] + 'cosy.lock'
+	global LOCKFILE
 
 	print 'Using lockfile: ' + LOCKFILE
 	print 'Entering command check loop'
