@@ -5,7 +5,7 @@ import sys
 import urllib            # URL functions
 import urllib2           # URL functions
 from energenie import switch_on, switch_off
-
+import RPi.GPIO as GPIO
 
 def main():
 
@@ -41,7 +41,8 @@ def main():
 			time.sleep(INTERVAL)
 
 	except KeyboardInterrupt:
-		#GPIO.cleanup()
+		print 'Interruped by user at keyboard. Halting'
+		GPIO.cleanup()
 		sys.stdout.flush()
 
 
