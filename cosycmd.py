@@ -7,36 +7,55 @@ import urllib2           # URL functions
 from energenie import switch_on, switch_off
 import RPi.GPIO as GPIO
 
+INTERVAL = 10    # Delay between each check (seconds)
+APIKEY = '6VYHZF359E74W3C3'
+TALKBACK = 'https://api.thingspeak.com/talkbacks/5442/commands/execute'
+
+def exec_next_command():
+	values = {'api_key' : APIKEY }
+	postdata = urllib.urlencode(values)
+	req = urllib2.Request(TALKBACK, postdata)
+	try:	
+		response = urllib2.urlopen(req, None, 5)
+		cmd = response.read()
+		response.close()
+		return cmd		
+	except urllib2.HTTPError, e:
+		log = log + 'Server could not fulfill the request. Error code: ' + e.code
+	except urllib2.URLError, e:
+		log = log + 'Failed to reach server. '
+		if isinstance(e, basestring):
+			log = log  + e.reason
+	except:
+		log = log + 'Unknown error'
+	print log
+
 def main():
 
-	INTERVAL = 10    # Delay between each check (seconds)
-	APIKEY = '6VYHZF359E74W3C3'
-	TABLKBACK = 'https://api.thingspeak.com/talkbacks/5442/commands/execute'
+	global INTERVAL
+	global APIKEY
+	global TALKBACK
+	LOCKFILE = os.path.realpath(__file__)
 
-	time.sleep(120) # wait a couple of minutes for wifi to become active
-
+	print 'Running in ' + LOCKFILE
 	print 'Entering command check loop'
 	sys.stdout.flush()
 
 	try:
 		while True:
 			# Fetch and execute the next command
-			values = {'api_key' : APIKEY }
-			postdata = urllib.urlencode(values)
-			req = urllib2.Request(TABLKBACK, postdata)
-			
-			response = urllib2.urlopen(req, None, 5)
-			html_string = response.read()
-			response.close()
-			if len(html_string) > 0:
-				if html_string == 'ON':
+			cmd = exec_next_command()
+			if len(cmd) > 0:
+				if cmd == 'ON':
 					print 'Switching ON'
 					switch_on(1)
-				elif html_string == 'OFF':
+				elif cmd == 'OFF':
 					print 'Switching OFF'
 					switch_off(1)
+				elif cmd == 'LOCKOFF':
+					print 'Locking OFF'
 				else:
-					print 'Ignoring: ' + html_string
+					print 'Ignoring: ' + cmd			
 			sys.stdout.flush()
 			time.sleep(INTERVAL)
 
@@ -44,7 +63,6 @@ def main():
 		print 'Interruped by user at keyboard. Halting'
 		GPIO.cleanup()
 		sys.stdout.flush()
-
 
 if __name__=="__main__":
 	main()
