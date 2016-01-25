@@ -36,8 +36,9 @@ def main():
 	global APIKEY
 	global TALKBACK
 	LOCKFILE = os.path.realpath(__file__)
+	LOCKFILE = LOCKFILE[:-len(__file__)] + 'cosy.lock'
 
-	print 'Running in ' + LOCKFILE
+	print 'Using lockfile: ' + LOCKFILE
 	print 'Entering command check loop'
 	sys.stdout.flush()
 
@@ -48,12 +49,16 @@ def main():
 			if len(cmd) > 0:
 				if cmd == 'ON':
 					print 'Switching ON'
+					os.remove(LOCKFILE)
 					switch_on(1)
 				elif cmd == 'OFF':
 					print 'Switching OFF'
 					switch_off(1)
 				elif cmd == 'LOCKOFF':
 					print 'Locking OFF'
+					lock = open(LOCKFILE, 'w')
+					lock.close()
+					switch_off(1)
 				else:
 					print 'Ignoring: ' + cmd			
 			sys.stdout.flush()
