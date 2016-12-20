@@ -3,14 +3,12 @@
 A re-write of cosyhutch.py intended to be suitable single time call from cron.
 That is, there's no continuous loop. Also to use logging rather than prints.
 '''
-import time
 import os
 import sys
 import urllib            # URL functions
 import urllib2           # URL functions
 import subprocess
 from energenie import switch_on, switch_off
-import RPi.GPIO as GPIO
 import logging
 import logging.config
 
