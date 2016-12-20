@@ -50,7 +50,9 @@ def main():
 			if len(cmd) > 0:
 				if cmd == 'ON':
 					print 'Switching ON'
-					os.remove(LOCKFILE)
+					if os.path.isfile(LOCKFILE):
+						print 'Removing lockfile ' + LOCKFILE
+						os.remove(LOCKFILE)
 					switch_on(1)
 				elif cmd == 'OFF':
 					print 'Switching OFF'

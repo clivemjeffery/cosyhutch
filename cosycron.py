@@ -12,6 +12,7 @@ import subprocess
 from energenie import switch_on, switch_off
 import RPi.GPIO as GPIO
 import logging
+import logging.config
 
 ################# Default Constants #################
 THINGSPEAKKEY = 'BKW4Q7PQGF3S18EG'
@@ -19,12 +20,12 @@ THINGSPEAKURL = 'https://api.thingspeak.com/update'
 SENSOR = '/sys/bus/w1/devices/28-011590a84eff/w1_slave'
 LOCKFILE = '/home/pi/cosyhutch/cosy.lock'
 #####################################################
-logging.config.fileConfig('cosylog.conf')
+logging.config.fileConfig('/home/pi/cosyhutch/logging.conf')
 logger = logging.getLogger('cosylog')
 
 def sendData(url,key,temp):
 	logger.debug('TRACEIN: sendData')
-	values = {'api_key' : key,'field1' : 0, 'field2' : temp} # to-do change channel for 1 temp
+	values = {'api_key' : key,'field1' : temp}
 	postdata = urllib.urlencode(values)
 	req = urllib2.Request(url, postdata)
 	logger.debug('Posting to thingspeak.')
@@ -63,7 +64,7 @@ def main():
 	try:
 		logger.info('Reading temperature...')
 		sens_temp = read_18b20()
-		logger.info(' - temperature = %.2f °C', sens_temp)
+		logger.info(' - temperature = %.2f C', sens_temp)
 		if sens_temp >= 10.0:
 			switch_off(1)
 		elif sens_temp < 8.0:
