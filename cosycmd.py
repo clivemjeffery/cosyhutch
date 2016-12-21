@@ -4,8 +4,9 @@ import sys
 import urllib            # URL functions
 import urllib2           # URL functions
 from energenie import switch_on, switch_off
+import RPi.GPIO as GPIO
 import logging
-import logging.conf
+import logging.config
 
 ##### Default constants
 APIKEY = '6VYHZF359E74W3C3'
@@ -60,6 +61,9 @@ def main():
 	
 	except Exception:
 		logger.exception('An error was caught, see traceback.')
+		GPIO.cleanup()
+
+	GPIO.cleanup()
 		
 if __name__=="__main__":
 	main()
