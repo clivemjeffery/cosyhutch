@@ -21,9 +21,9 @@ LOCKFILE = '/home/pi/cosyhutch/cosy.lock'
 logging.config.fileConfig('/home/pi/cosyhutch/logging.conf')
 logger = logging.getLogger('cosylog')
 
-def sendData(url,key,temp):
+def sendData(url, key, temp, status):
 	logger.debug('TRACEIN: sendData')
-	values = {'api_key' : key,'field1' : temp}
+	values = {'api_key' : key,'field1' : temp, 'status' : status}
 	postdata = urllib.urlencode(values)
 	req = urllib2.Request(url, postdata)
 	logger.debug('Posting to thingspeak.')
@@ -58,6 +58,7 @@ def main():
 
 	chip_temp = 0.0
 	sens_temp = 0.0
+	status = ''
 
 	try:
 		logger.debug('Reading temperature...')
@@ -66,18 +67,27 @@ def main():
 		if sens_temp >= 10.0:
 			logger.info(' - above 10.0 and switching off.')
 			switch_off(1)
+			status = 'off'
 		elif sens_temp < 8.0:
 			if os.path.isfile(LOCKFILE):
 				logger.info(' - below 8.0 and locked off.')
+				status = 'locked'
 			else:
 				logger.info(' - below 8.0 and switching on.')
 				switch_on(1)
-		sendData(THINGSPEAKURL, THINGSPEAKKEY, sens_temp)
-		
+				status = 'on'		
 	except Exception:
-		logger.exception('An error was caught, see traceback.')
+		logger.exception('Error in sensing or control.')
+		status = 'error'
 
-	logger.debug('...completed')
+	try:
+		sendData(THINGSPEAKURL, THINGSPEAKKEY, sens_temp, status)
+	except Exception:
+		logger.exception('Error sending data.')
+
+	logger.debug('...cleaning up...')
+	GPIO.cleanup()
+	logger.debug('...done.')
 
 if __name__=="__main__":
 	main()
