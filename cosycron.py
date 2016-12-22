@@ -73,17 +73,17 @@ def main():
 		if os.path.isfile(LOCKFILE): # ensure locked off
 			switch_off(1)
 			status = 'Switched off in lock'
-			logger.info(status)
 		elif sens_temp >= 10.0:
 			switch_off(1)
 			status = 'Switched off at high limit'
-			logger.info(status)
 		elif sens_temp < 8.0:
 			switch_on(1)
 			status = 'Switched on at low limit'
-			logger.info(status)
+		else:
+			status = 'Stable'
+		logger.info(status)
 	except Exception:
-		status = 'Conrol error'
+		status = 'Control error'
 		logger.exception(status)
 		
 	try:
