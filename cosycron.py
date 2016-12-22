@@ -65,7 +65,7 @@ def main():
 		logger.debug('Reading temperature...')
 		sens_temp = read_18b20()
 		logger.info(' - temperature = %.2f C', sens_temp)
-	except: Exception:
+	except Exception:
 		status = 'Sensing error'
 		logger.exception(status)
 		
