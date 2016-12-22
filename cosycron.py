@@ -60,10 +60,11 @@ def main():
 	sens_temp = 0.0
 
 	try:
-		logger.info('Reading temperature...')
+		logger.debug('Reading temperature...')
 		sens_temp = read_18b20()
 		logger.info(' - temperature = %.2f C', sens_temp)
 		if sens_temp >= 10.0:
+			logger.info(' - above 10.0 and switching off.')
 			switch_off(1)
 		elif sens_temp < 8.0:
 			if os.path.isfile(LOCKFILE):
@@ -76,7 +77,7 @@ def main():
 	except Exception:
 		logger.exception('An error was caught, see traceback.')
 
-	logger.info('...completed')
+	logger.debug('...completed')
 
 if __name__=="__main__":
 	main()
