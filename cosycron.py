@@ -31,7 +31,7 @@ def sendData(url, key, temp, status):
 	response = urllib2.urlopen(req, None, 5)
 	html_string = response.read()
 	response.close()
-	logger.debug("TRACEOUT: sendData with thingspeak response %s", html_string)
+	logger.debug("TRACEOUT: sendData - thingspeak response: %s", html_string)
 
 
 def sensor_raw():
@@ -61,26 +61,31 @@ def main():
 	sens_temp = 0.0
 	status = ''
 
-	try:
+	try: # sensing
 		logger.debug('Reading temperature...')
 		sens_temp = read_18b20()
 		logger.info(' - temperature = %.2f C', sens_temp)
-		if sens_temp >= 10.0:
-			logger.info(' - above 10.0 and switching off.')
+	except: Exception:
+		status = 'Sensing error'
+		logger.exception(status)
+		
+	try: # control
+		if os.path.isfile(LOCKFILE): # ensure locked off
 			switch_off(1)
-			status = 'off'
+			status = 'Switched off in lock'
+			logger.info(status)
+		elif sens_temp >= 10.0:
+			switch_off(1)
+			status = 'Switched off at high limit'
+			logger.info(status)
 		elif sens_temp < 8.0:
-			if os.path.isfile(LOCKFILE):
-				logger.info(' - below 8.0 and locked off.')
-				status = 'locked'
-			else:
-				logger.info(' - below 8.0 and switching on.')
-				switch_on(1)
-				status = 'on'		
+			switch_on(1)
+			status = 'Switched on at low limit'
+			logger.info(status)
 	except Exception:
-		logger.exception('Error in sensing or control.')
-		status = 'error'
-
+		status = 'Conrol error'
+		logger.exception(status)
+		
 	try:
 		sendData(THINGSPEAKURL, THINGSPEAKKEY, sens_temp, status)
 	except Exception:
