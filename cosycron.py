@@ -8,6 +8,7 @@ import sys
 import urllib            # URL functions
 import urllib2           # URL functions
 import subprocess
+import RPi.GPIO as GPIO
 from energenie import switch_on, switch_off
 import logging
 import logging.config
