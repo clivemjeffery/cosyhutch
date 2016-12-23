@@ -61,6 +61,10 @@ def main():
 	sens_temp = 0.0
 	status = ''
 
+	maxTEMP = os.getenv('COSYMAX', 10.0)
+	minTEMP = os.getenv('COSYMIN', 8.0)
+	logger.debug('CosyHutch max=%.2f min=%.2f', maxTEMP, minTEMP)
+
 	try: # sensing
 		logger.debug('Reading temperature...')
 		sens_temp = read_18b20()
@@ -73,12 +77,12 @@ def main():
 		if os.path.isfile(LOCKFILE): # ensure locked off
 			switch_off(1)
 			status = 'switched off in lock'
-		elif sens_temp >= 10.0:
+		elif sens_temp >= maxTEMP:
 			switch_off(1)
-			status = 'switched off at high limit'
-		elif sens_temp < 8.0:
+			status = 'switched off at %.2f (high)' % maxTEMP
+		elif sens_temp <= minTEMP:
 			switch_on(1)
-			status = 'switched on at low limit'
+			status = 'switched on at %.2f (low)' % minTEMP
 		else:
 			status = 'stable'
 		logger.info(status)
