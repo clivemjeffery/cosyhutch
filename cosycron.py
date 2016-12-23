@@ -72,7 +72,8 @@ def main():
 	try: # sensing
 		logger.debug('Reading temperature...')
 		sens_temp = read_18b20()
-		logger.info('%.2f C', sens_temp)
+		status = '%.2f C' % sens_temp
+		logger.debug(status)
 	except Exception:
 		status = 'Sensing error'
 		logger.exception(status)
@@ -80,15 +81,15 @@ def main():
 	try: # control
 		if os.path.isfile(LOCKFILE): # ensure locked off
 			switch_off(1)
-			status = 'switched off in lock'
+			status = '%s switched off in lock' % status
 		elif sens_temp >= args.cosymax:
 			switch_off(1)
-			status = 'switched off at %.2f (high)' % args.cosymax
+			status = '%s switched off at %.2f (high)' % (status, args.cosymax)
 		elif sens_temp <= args.cosymin:
 			switch_on(1)
-			status = 'switched on at %.2f (low)' % args.cosymin
+			status = '%s switched on at %.2f (low)' % (status, args.cosymin)
 		else:
-			status = 'stable'
+			status = '%s stable' % status
 		logger.info(status)
 	except Exception:
 		status = 'Control error'
