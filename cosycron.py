@@ -1,7 +1,7 @@
 #!/usr/bin/python
 '''
-A re-write of cosyhutch.py intended to be suitable single time call from cron.
-That is, there's no continuous loop. Also to use logging rather than prints.
+A COSYHUTCH script intended to be suitable single time call from cron.
+Uses logging configured in logging.conf.
 '''
 import os
 import sys
@@ -12,6 +12,7 @@ import RPi.GPIO as GPIO
 from energenie import switch_on, switch_off
 import logging
 import logging.config
+import argparse
 
 ################# Default Constants #################
 THINGSPEAKKEY = 'BKW4Q7PQGF3S18EG'
@@ -61,9 +62,12 @@ def main():
 	sens_temp = 0.0
 	status = ''
 
-	maxTEMP = os.getenv('COSYMAX', 10.0)
-	minTEMP = os.getenv('COSYMIN', 8.0)
-	logger.debug('CosyHutch max=%.2f min=%.2f', maxTEMP, minTEMP)
+	parser = argparse.ArgumentParser()
+	parser.add_argument("-n", "--cosymin", default=8.0, type=float, help='The minimum desired hutch temperature.')
+	parser.add_argument("-x", "--cosymax", default=10.0, type=float, help='The temperature at which to turn off the heater.')
+	args = parser.parse_args()
+
+	logger.debug('CosyHutch min=%.2f max=%.2f', args.cosymin, args.cosymax)
 
 	try: # sensing
 		logger.debug('Reading temperature...')
@@ -77,12 +81,12 @@ def main():
 		if os.path.isfile(LOCKFILE): # ensure locked off
 			switch_off(1)
 			status = 'switched off in lock'
-		elif sens_temp >= maxTEMP:
+		elif sens_temp >= args.cosymax:
 			switch_off(1)
-			status = 'switched off at %.2f (high)' % maxTEMP
-		elif sens_temp <= minTEMP:
+			status = 'switched off at %.2f (high)' % args.cosymax
+		elif sens_temp <= args.cosymin:
 			switch_on(1)
-			status = 'switched on at %.2f (low)' % minTEMP
+			status = 'switched on at %.2f (low)' % args.cosymin
 		else:
 			status = 'stable'
 		logger.info(status)
