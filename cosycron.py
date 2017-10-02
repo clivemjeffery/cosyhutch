@@ -17,15 +17,17 @@ import argparse
 ################# Default Constants #################
 THINGSPEAKKEY = 'BKW4Q7PQGF3S18EG'
 THINGSPEAKURL = 'https://api.thingspeak.com/update'
-SENSOR = '/sys/bus/w1/devices/28-011590a84eff/w1_slave'
+SENSPAT = '/sys/bus/w1/devices/*/w1_slave'
+SENS1 = '28-011590a84eff'
+SENS2 = '28-000008e748b9'
 LOCKFILE = '/home/pi/cosyhutch/cosy.lock'
 #####################################################
 logging.config.fileConfig('/home/pi/cosyhutch/logging.conf')
 logger = logging.getLogger('cosylog')
 
-def sendData(url, key, temp, status):
+def sendData(url, key, temp1, temp2, status):
 	logger.debug('TRACEIN: sendData')
-	values = {'api_key' : key,'field1' : temp, 'status' : status}
+	values = {'api_key' : key,'field1' : temp1, 'field2': temp2, 'status' : status}
 	postdata = urllib.urlencode(values)
 	req = urllib2.Request(url, postdata)
 	logger.debug('Posting to thingspeak.')
@@ -35,16 +37,16 @@ def sendData(url, key, temp, status):
 	logger.debug("TRACEOUT: sendData - thingspeak response: %s", html_string)
 
 
-def sensor_raw():
-	f = open(SENSOR, 'r')
+def sensor_raw(sensid):
+	f = open(SENSPAT.replace('*',sensid,1), 'r')
 	lines = f.readlines()
 	f.close()
 	#print lines
 	return lines
 
 
-def read_18b20():
-	sensor_info = sensor_raw()
+def read_18b20(sensid):
+	sensor_info = sensor_raw(sensid)
 	sensor_temp = sensor_info[1].find('t=')
 	if sensor_temp != -1:
 		temp = sensor_info[1].strip()[sensor_temp+2:]
@@ -56,10 +58,12 @@ def main():
 
 	global THINGSPEAKKEY
 	global THINGSPEAKURL
-	global SENSOR
+	global SENSPAT
+	global SENS1
+	global SENS2
 
-	chip_temp = 0.0
-	sens_temp = 0.0
+	outside_temp = 0.0
+	hutch_temp = 0.0
 	status = ''
 
 	parser = argparse.ArgumentParser()
@@ -71,21 +75,22 @@ def main():
 
 	try: # sensing
 		logger.debug('Reading temperature...')
-		sens_temp = read_18b20()
-		status = '%.2f C' % sens_temp
+		hutch_temp = read_18b20(SENS1)
+		outside_temp = read_18b20(SENS2)
+		status = '%.2f C, %.2f C' % (hutch_temp, outside_temp)
 		logger.debug(status)
 	except Exception:
-		status = 'Sensing error'
+		status = 'Sensing error' 
 		logger.exception(status)
 		
 	try: # control
 		if os.path.isfile(LOCKFILE): # ensure locked off
 			switch_off(1)
 			status = '%s switched off in lock' % status
-		elif sens_temp >= args.cosymax:
+		elif hutch_temp >= args.cosymax:
 			switch_off(1)
 			status = '%s switched off at %.2f (high)' % (status, args.cosymax)
-		elif sens_temp <= args.cosymin:
+		elif hutch_temp <= args.cosymin:
 			switch_on(1)
 			status = '%s switched on at %.2f (low)' % (status, args.cosymin)
 		else:
@@ -96,7 +101,7 @@ def main():
 		logger.exception(status)
 		
 	try:
-		sendData(THINGSPEAKURL, THINGSPEAKKEY, sens_temp, status)
+		sendData(THINGSPEAKURL, THINGSPEAKKEY, hutch_temp, outside_temp, status)
 	except Exception:
 		logger.exception('Error sending data.')
 

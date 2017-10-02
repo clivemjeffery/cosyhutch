@@ -1,5 +1,7 @@
 # CosyHutch specific
 cosy.lock
+cosy.log
+cosy.log.*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
