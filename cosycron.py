@@ -21,34 +21,34 @@ THINGSPEAKURL = 'https://api.thingspeak.com/update'
 LOCKFILE = '/home/pi/cosyhutch/cosy.lock'
 #####################################################
 if sys.platform == 'darwin':
-  DEVICEPATH = './device_sim/'
-  logging.config.fileConfig('simlog.conf')
+	DEVICEPATH = './device_sim/'
+	logging.config.fileConfig('simlog.conf')
 else:
 	DEVICEPATH = '/sys/bus/w1/devices/'
-  logging.config.fileConfig('/home/pi/cosyhutch/logging.conf')
+	logging.config.fileConfig('/home/pi/cosyhutch/logging.conf')
 logger = logging.getLogger('cosylog')
 
 SENSORS = []
 
 def sendData(status):
-  logger.debug("TRACEIN: sendData")
-  
-  values = {'api_key' : THINGSPEAKKEY, 'status' : status}
-  temperatures = {}
-  for sensor in SENSORS:
-    temperatures[sensor.field] = sensor.temperature
+	logger.debug("TRACEIN: sendData")
+	
+	values = {'api_key' : THINGSPEAKKEY, 'status' : status}
+	temperatures = {}
+	for sensor in SENSORS:
+		temperatures[sensor.field] = sensor.temperature
 
-  logger.debug("sendData - temperatures: %s", temperatures)
-  values.update(temperatures)
-  logger.debug("sendData - values: %s", values)
-  
-  postdata = urllib.urlencode(values)
-  req = urllib2.Request(THINGSPEAKURL, postdata)
-  logger.debug('Posting to thingspeak.')
-  response = urllib2.urlopen(req, None, 5)
-  html_string = response.read()
-  response.close()
-  logger.debug("TRACEOUT: sendData - thingspeak response: %s", html_string)
+	logger.debug("sendData - temperatures: %s", temperatures)
+	values.update(temperatures)
+	logger.debug("sendData - values: %s", values)
+	
+	postdata = urllib.urlencode(values)
+	req = urllib2.Request(THINGSPEAKURL, postdata)
+	logger.debug('Posting to thingspeak.')
+	response = urllib2.urlopen(req, None, 5)
+	html_string = response.read()
+	response.close()
+	logger.debug("TRACEOUT: sendData - thingspeak response: %s", html_string)
 
 
 def main():
@@ -64,13 +64,13 @@ def main():
 	logger.debug('CosyHutch min=%.2f max=%.2f', args.cosymin, args.cosymax)
 
 	SENSORS.append(Sensor('field1', DEVICEPATH + '28-000008e748b9'))
-  SENSORS.append(Sensor('field2', DEVICEPATH + '28-011590390dff'))
-  SENSORS.append(Sensor('field3', DEVICEPATH + '28-0115909108ff'))
-  SENSORS.append(Sensor('field4', DEVICEPATH + '28-011590a84eff'))
+	SENSORS.append(Sensor('field2', DEVICEPATH + '28-011590390dff'))
+	SENSORS.append(Sensor('field3', DEVICEPATH + '28-0115909108ff'))
+	SENSORS.append(Sensor('field4', DEVICEPATH + '28-011590a84eff'))
 
 	logger.debug('Reading temperatures...')
 	for sensor in SENSORS:
-    status = sensor.read_temperature(status)
+		status = sensor.read_temperature(status)
 	logger.debug(status)
 		
 	try: # control
