@@ -13,57 +13,47 @@ from energenie import switch_on, switch_off
 import logging
 import logging.config
 import argparse
+from sensor import Sensor
 
 ################# Default Constants #################
 THINGSPEAKKEY = 'BKW4Q7PQGF3S18EG'
 THINGSPEAKURL = 'https://api.thingspeak.com/update'
-SENSPAT = '/sys/bus/w1/devices/*/w1_slave'
-SENS1 = '28-011590a84eff'
-SENS2 = '28-000008e748b9'
 LOCKFILE = '/home/pi/cosyhutch/cosy.lock'
 #####################################################
-logging.config.fileConfig('/home/pi/cosyhutch/logging.conf')
+if sys.platform == 'darwin':
+  DEVICEPATH = './device_sim/'
+  logging.config.fileConfig('simlog.conf')
+else:
+	DEVICEPATH = '/sys/bus/w1/devices/'
+  logging.config.fileConfig('/home/pi/cosyhutch/logging.conf')
 logger = logging.getLogger('cosylog')
 
-def sendData(url, key, temp1, temp2, status):
-	logger.debug('TRACEIN: sendData')
-	values = {'api_key' : key,'field1' : temp1, 'field2': temp2, 'status' : status}
-	postdata = urllib.urlencode(values)
-	req = urllib2.Request(url, postdata)
-	logger.debug('Posting to thingspeak.')
-	response = urllib2.urlopen(req, None, 5)
-	html_string = response.read()
-	response.close()
-	logger.debug("TRACEOUT: sendData - thingspeak response: %s", html_string)
+SENSORS = []
 
+def sendData(status):
+  logger.debug("TRACEIN: sendData")
+  
+  values = {'api_key' : THINGSPEAKKEY, 'status' : status}
+  temperatures = {}
+  for sensor in SENSORS:
+    temperatures[sensor.field] = sensor.temperature
 
-def sensor_raw(sensid):
-	f = open(SENSPAT.replace('*',sensid,1), 'r')
-	lines = f.readlines()
-	f.close()
-	#print lines
-	return lines
-
-
-def read_18b20(sensid):
-	sensor_info = sensor_raw(sensid)
-	sensor_temp = sensor_info[1].find('t=')
-	if sensor_temp != -1:
-		temp = sensor_info[1].strip()[sensor_temp+2:]
-		temp_degrees = float(temp)/1000.0
-		return temp_degrees
+  logger.debug("sendData - temperatures: %s", temperatures)
+  values.update(temperatures)
+  logger.debug("sendData - values: %s", values)
+  
+  postdata = urllib.urlencode(values)
+  req = urllib2.Request(THINGSPEAKURL, postdata)
+  logger.debug('Posting to thingspeak.')
+  response = urllib2.urlopen(req, None, 5)
+  html_string = response.read()
+  response.close()
+  logger.debug("TRACEOUT: sendData - thingspeak response: %s", html_string)
 
 
 def main():
 
-	global THINGSPEAKKEY
-	global THINGSPEAKURL
-	global SENSPAT
-	global SENS1
-	global SENS2
-
-	outside_temp = 0.0
-	hutch_temp = 0.0
+	hutch_temp = 15.0 # TODO: reset to zero, this is just to keep off during temperature tests
 	status = ''
 
 	parser = argparse.ArgumentParser()
@@ -73,15 +63,15 @@ def main():
 
 	logger.debug('CosyHutch min=%.2f max=%.2f', args.cosymin, args.cosymax)
 
-	try: # sensing
-		logger.debug('Reading temperature...')
-		hutch_temp = read_18b20(SENS1)
-		outside_temp = read_18b20(SENS2)
-		status = '%.2f C, %.2f C' % (hutch_temp, outside_temp)
-		logger.debug(status)
-	except Exception:
-		status = 'Sensing error' 
-		logger.exception(status)
+	SENSORS.append(Sensor('field1', DEVICEPATH + '28-000008e748b9'))
+  SENSORS.append(Sensor('field2', DEVICEPATH + '28-011590390dff'))
+  SENSORS.append(Sensor('field3', DEVICEPATH + '28-0115909108ff'))
+  SENSORS.append(Sensor('field4', DEVICEPATH + '28-011590a84eff'))
+
+	logger.debug('Reading temperatures...')
+	for sensor in SENSORS:
+    status = sensor.read_temperature(status)
+	logger.debug(status)
 		
 	try: # control
 		if os.path.isfile(LOCKFILE): # ensure locked off
@@ -101,7 +91,7 @@ def main():
 		logger.exception(status)
 		
 	try:
-		sendData(THINGSPEAKURL, THINGSPEAKKEY, hutch_temp, outside_temp, status)
+		sendData(status)
 	except Exception:
 		logger.exception('Error sending data.')
 
