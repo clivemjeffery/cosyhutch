@@ -63,10 +63,10 @@ def main():
 
 	logger.debug('CosyHutch min=%.2f max=%.2f', args.cosymin, args.cosymax)
 
-	SENSORS.append(Sensor('field1', DEVICEPATH + '28-000008e748b9'))
-	SENSORS.append(Sensor('field2', DEVICEPATH + '28-011590390dff'))
-	SENSORS.append(Sensor('field3', DEVICEPATH + '28-0115909108ff'))
-	SENSORS.append(Sensor('field4', DEVICEPATH + '28-011590a84eff'))
+  SENSORS.append(Sensor('field1', DEVICEPATH + '28-000008e748b9', 'Outside'))
+  SENSORS.append(Sensor('field2', DEVICEPATH + '28-011590390dff', 'Lavatory'))
+  SENSORS.append(Sensor('field3', DEVICEPATH + '28-0115909108ff', 'Boudoir'))
+  SENSORS.append(Sensor('field4', DEVICEPATH + '28-011590a84eff', 'Living Room'))
 
 	logger.debug('Reading temperatures...')
 	for sensor in SENSORS:

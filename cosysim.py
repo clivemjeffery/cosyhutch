@@ -52,18 +52,27 @@ def main():
   print(sys.platform)
   logger.info(sys.platform)
 
-  SENSORS.append(Sensor('field1', DEVICEPATH + '28-000008e748b9'))
-  SENSORS.append(Sensor('field2', DEVICEPATH + '28-011590390dff'))
-  SENSORS.append(Sensor('field3', DEVICEPATH + '28-0115909108ff'))
-  SENSORS.append(Sensor('field4', DEVICEPATH + '28-011590a84eff'))
+  SENSORS.append(Sensor('field1', DEVICEPATH + '28-000008e748b9', 'Outside'))
+  SENSORS.append(Sensor('field2', DEVICEPATH + '28-011590390dff', 'Lavatory'))
+  SENSORS.append(Sensor('field3', DEVICEPATH + '28-0115909108ff', 'Boudoir'))
+  SENSORS.append(Sensor('field4', DEVICEPATH + '28-011590a84eff', 'Living Room'))
   
   status = ''
+  print 'Initial state of sensors'
+  print '------------------------'
   for sensor in SENSORS:
     print(sensor)
-    status = sensor.read_temperature(status)
-    print(sensor)
 
-  sendData(status)
+  print 'Simulate sensor reading'
+  print '-----------------------'
+  for sensor in SENSORS:
+    status = sensor.read_temperature(status)
+    print('Sensor: %s' % (sensor))
+  
+  print('Accumulated status: %s' % status)
+
+
+  # sendData(status) # Note: this can fail if it collides with a send from the cron job on the pi
 
 if __name__=="__main__":
   main()
