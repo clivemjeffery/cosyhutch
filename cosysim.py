@@ -72,6 +72,9 @@ def main():
   print('Accumulated status: %s' % status)
 
 
+  hutch_temp = SENSORS[2].temperature # check access to boudoir temperature
+  print(hutch_temp)
+
   # sendData(status) # Note: this can fail if it collides with a send from the cron job on the pi
 
 if __name__=="__main__":

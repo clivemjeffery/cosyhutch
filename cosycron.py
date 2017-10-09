@@ -72,17 +72,18 @@ def main():
   for sensor in SENSORS:
     status = sensor.read_temperature(status)
   logger.debug(status)
-    
+
+  hutch_temp = SENSORS[2].temperature
   try: # control
     if os.path.isfile(LOCKFILE): # ensure locked off
       switch_off(1)
       status = '%s switched off in lock' % status
     elif hutch_temp >= args.cosymax:
       switch_off(1)
-      status = '%s switched off at %.2f (high)' % (status, args.cosymax)
+      status = '%s switched off %.2f > %.2f (high)' % (status, hutch_temp, args.cosymax)
     elif hutch_temp <= args.cosymin:
       switch_on(1)
-      status = '%s switched on at %.2f (low)' % (status, args.cosymin)
+      status = '%s switched on %.2f < %.2f (low)' % (status, hutch_temp, args.cosymin)
     else:
       status = '%s stable' % status
     logger.info(status)
