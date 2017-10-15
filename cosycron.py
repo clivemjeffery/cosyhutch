@@ -5,6 +5,7 @@ Uses logging configured in logging.conf.
 '''
 import os
 import sys
+import time
 import urllib            # URL functions
 import urllib2           # URL functions
 import subprocess
