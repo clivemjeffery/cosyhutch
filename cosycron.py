@@ -27,6 +27,7 @@ else:
   DEVICEPATH = '/sys/bus/w1/devices/'
   logging.config.fileConfig('/home/pi/cosyhutch/logging.conf')
 logger = logging.getLogger('cosylog')
+datalogger = logging.getLogger('cosydatalog')
 
 SENSORS = []
 
@@ -90,6 +91,8 @@ def main():
   except Exception:
     status = 'Control error'
     logger.exception(status)
+
+  datalogger.info("%f\t%.2f\t%.2f\t%.2f\t%.2f", time.time(), SENSORS[0].temperature, SENSORS[1].temperature, SENSORS[2].temperature, SENSORS[3].temperature)
     
   try:
     sendData(status)

@@ -17,6 +17,7 @@ if sys.platform == 'darwin':
 else:
   logging.config.fileConfig('/home/pi/cosyhutch/logging.conf')
 logger = logging.getLogger('cosylog')
+datalogger = logging.getLogger('cosydatalog')
 
 
 ################# Default Constants #################
@@ -74,6 +75,9 @@ def main():
 
   hutch_temp = SENSORS[2].temperature # check access to boudoir temperature
   print(hutch_temp)
+
+  #datalogger.info("time\t%.2f\t%.2f\t%.2f\t%.2f" % SENSORS[0].temperature, SENSORS[1].temperature, SENSORS[2].temperature, SENSORS[3].temperature )
+  datalogger.info("%f\t%.2f\t%.2f\t%.2f\t%.2f", time.time(), SENSORS[0].temperature, SENSORS[1].temperature, SENSORS[2].temperature, SENSORS[3].temperature)
 
   # sendData(status) # Note: this can fail if it collides with a send from the cron job on the pi
 
