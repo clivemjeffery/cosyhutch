@@ -2,6 +2,7 @@
 cosy.lock
 cosy.log
 cosy.log.*
+cosyviz/index.html
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
