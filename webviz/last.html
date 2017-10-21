@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>CosyHutch !!</title>
+  </head>
+  <body>
+    <h1>CosyHutch !!</h1>
+    <table width="100%">
+      <thead>
+        <tr>
+          <td>Time</td>
+          <td>Outside</td>
+          <td>Boudior</td>
+          <td>Living</td>
+          <td>Lavvy</td>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td id="time"></td>
+          <td id="outside"></td>
+          <td id="boudior"></td>
+          <td id="living"></td>
+          <td id="lavvy"></td>
+        </tr>
+      </tbody>
+    </table>
+    <input type='file' onchange='openFile(event)'>
+  </body>
+
+<script type="text/javascript">
+  var openFile = function(event) {
+    var input = event.target;
+
+    var file = input.files[0];
+    console.log(file.lastModifiedDate);
+  };
+</script>
+</html>
