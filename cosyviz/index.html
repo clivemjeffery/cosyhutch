@@ -1,31 +1,34 @@
 <!DOCTYPE html>
 <html>
-  <head profile="http://www.w3.org/2005/10/profile">
+  <head>
     <meta charset="UTF-8">
+    <meta http-equiv="refresh" content="60">
+    <link rel="stylesheet" type="text/css" href="cosy.css">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
     <title>CosyHutch !!</title>
-    <link rel="icon" type="image/ico" href="favicon.ico">
   </head>
   <body>
-    <h1>CosyHutch !!</h1>
-    <table width="100%">
-      <thead>
-        <tr>
-          <td>Time</td>
-          <td>Outside</td>
-          <td>Boudior</td>
-          <td>Living</td>
-          <td>Lavvy</td>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td id="time">Sat Oct 21 16:32:06 2017</td>
-          <td id="outside">12.94</td>
-          <td id="boudior">12.50</td>
-          <td id="living">12.50</td>
-          <td id="lavvy">13.00</td>
-        </tr>
-      </tbody>
-    </table>
+    <svg width="100%" viewBox="0 0 800 320" preserveAspectRatio="xMidYMin slice" style="padding-bottom: 40%; height: 1px; overflow: visible">
+
+      <rect x="0" y="0" width="800" height="320" stroke="black" stroke-width="2" fill="none" />
+
+      <image xlink:href="hutch.jpg" x="0" y="0" height="320px" width="800px"/>
+      <text x="10" y="50" stroke="black" stroke-width="3" fill="white" font-family="Arial" font-size="72" font-weight="bold">
+        CosyHutch
+      </text>
+      <rect x="50" y="250" width="100" height="50" rx="5" ry="5" stroke-width="5" stroke="blue" fill="black" />
+<text x="55" y="265" font-family="arial" font-size="18" fill="white">Outside</text>
+<text x="65" y="295" font-family="arial" font-size="32" fill="white">12.9</text>
+      <rect x="75" y="100" width="100" height="50" rx="5" ry="5" stroke-width="5" stroke="cyan" fill="black" />
+<text x="80" y="115" font-family="arial" font-size="18" fill="white">Lavatory</text>
+<text x="90" y="145" font-family="arial" font-size="32" fill="white">13.0</text>
+      <rect x="260" y="80" width="100" height="50" rx="5" ry="5" stroke-width="5" stroke="wheat" fill="black" />
+<text x="265" y="95" font-family="arial" font-size="18" fill="white">Lounge</text>
+<text x="275" y="125" font-family="arial" font-size="32" fill="white">12.5</text>
+      <rect x="625" y="90" width="100" height="50" rx="5" ry="5" stroke-width="5" stroke="green" fill="black" />
+<text x="630" y="105" font-family="arial" font-size="18" fill="white">Boudoir</text>
+<text x="640" y="135" font-family="arial" font-size="32" fill="white">12.5</text>
+    </svg>
+    <div>Room for graphs...</div>
   </body>
 </html>
