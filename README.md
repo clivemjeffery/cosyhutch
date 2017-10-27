@@ -11,3 +11,5 @@ Here are some important `launchctl` commands.
     launchctl load com.rosedene.cosysimtest.plist
     launchctl unload com.rosedene.cosysimtest.plist 
     launchctl unload /Users/Clive/Library/LaunchAgents/com.rosedene.cosysimtest.plist # after reboot
+
+Remember to remove the symlink after testing!
