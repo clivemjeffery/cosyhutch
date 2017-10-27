@@ -9,8 +9,11 @@ import time
 import urllib            # URL functions
 import urllib2           # URL functions
 import subprocess
-import RPi.GPIO as GPIO
-from energenie import switch_on, switch_off
+if sys.platform == 'darwin':
+  from energeniesim import switch_on, switch_off
+else:
+  import RPi.GPIO as GPIO
+  from energenie import switch_on, switch_off
 import logging
 import logging.config
 import argparse
@@ -22,8 +25,8 @@ THINGSPEAKURL = 'https://api.thingspeak.com/update'
 LOCKFILE = '/home/pi/cosyhutch/cosy.lock'
 #####################################################
 if sys.platform == 'darwin':
-  DEVICEPATH = './device_sim/'
-  logging.config.fileConfig('simlog.conf')
+  DEVICEPATH = '/Users/Clive/rep/cosyhutch/device_sim/'
+  logging.config.fileConfig('/Users/Clive/rep/cosyhutch/simlog.conf')
 else:
   DEVICEPATH = '/sys/bus/w1/devices/'
   logging.config.fileConfig('/home/pi/cosyhutch/logging.conf')
@@ -34,22 +37,26 @@ SENSORS = []
 
 def sendData(status):
   logger.debug("TRACEIN: sendData")
-  
-  values = {'api_key' : THINGSPEAKKEY, 'status' : status}
-  temperatures = {}
-  for sensor in SENSORS:
-    temperatures[sensor.field] = sensor.temperature
+  html_string = 'placeholder for response'
+  if sys.platform == 'darwin':
+    logger.debug(' - Placeholder for post to thingspeak.')
+  else:
+    values = {'api_key' : THINGSPEAKKEY, 'status' : status}
+    temperatures = {}
+    for sensor in SENSORS:
+      temperatures[sensor.field] = sensor.temperature
 
-  logger.debug("sendData - temperatures: %s", temperatures)
-  values.update(temperatures)
-  logger.debug("sendData - values: %s", values)
-  
-  postdata = urllib.urlencode(values)
-  req = urllib2.Request(THINGSPEAKURL, postdata)
-  logger.debug('Posting to thingspeak.')
-  response = urllib2.urlopen(req, None, 5)
-  html_string = response.read()
-  response.close()
+    logger.debug("sendData - temperatures: %s", temperatures)
+    values.update(temperatures)
+    logger.debug("sendData - values: %s", values)
+    
+    postdata = urllib.urlencode(values)
+    req = urllib2.Request(THINGSPEAKURL, postdata)
+    logger.debug('Posting to thingspeak.')
+    response = urllib2.urlopen(req, None, 5)
+    html_string = response.read()
+    response.close()
+
   logger.debug("TRACEOUT: sendData - thingspeak response: %s", html_string)
 
 
@@ -57,6 +64,7 @@ def main():
 
   hutch_temp = 15.0 # TODO: reset to zero, this is just to keep off during temperature tests
   status = ''
+  heat_status = 'U' # U=unset, L=locked off, N=switched on,F=switched off, S=left stable
 
   parser = argparse.ArgumentParser()
   parser.add_argument("-n", "--cosymin", default=8.0, type=float, help='The minimum desired hutch temperature.')
@@ -80,20 +88,24 @@ def main():
     if os.path.isfile(LOCKFILE): # ensure locked off
       switch_off(1)
       status = '%s switched off in lock' % status
+      heat_status = 'L'
     elif hutch_temp >= args.cosymax:
       switch_off(1)
       status = '%s switched off %.2f > %.2f (high)' % (status, hutch_temp, args.cosymax)
+      heat_status = 'F'
     elif hutch_temp <= args.cosymin:
       switch_on(1)
       status = '%s switched on %.2f < %.2f (low)' % (status, hutch_temp, args.cosymin)
+      heat_status = 'N'
     else:
       status = '%s stable' % status
+      heat_status = 'S'
     logger.info(status)
   except Exception:
     status = 'Control error'
     logger.exception(status)
 
-  datalogger.info("%f\t%.2f\t%.2f\t%.2f\t%.2f", time.time(), SENSORS[0].temperature, SENSORS[1].temperature, SENSORS[2].temperature, SENSORS[3].temperature)
+  datalogger.info("%f\t%.2f\t%.2f\t%.2f\t%.2f\t%s", time.time(), SENSORS[0].temperature, SENSORS[1].temperature, SENSORS[2].temperature, SENSORS[3].temperature, heat_status)
     
   try:
     sendData(status)
@@ -101,7 +113,8 @@ def main():
     logger.exception('Error sending data.')
 
   logger.debug('...cleaning up...')
-  GPIO.cleanup()
+  if sys.platform != 'darwin':
+    GPIO.cleanup()
   logger.debug('...done.')
 
 if __name__=="__main__":

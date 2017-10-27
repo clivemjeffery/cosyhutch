@@ -3,7 +3,7 @@ import logging
 import logging.config
 
 if sys.platform == 'darwin':
-  logging.config.fileConfig('simlog.conf')
+  logging.config.fileConfig('/Users/Clive/rep/cosyhutch/simlog.conf')
 else:
   logging.config.fileConfig('/home/pi/cosyhutch/logging.conf')
 logger = logging.getLogger('cosylog')

@@ -2,6 +2,8 @@
 '''
 COSYHUTCH simulator prototype.
 Idea is to run under macOS to test and speed up development.
+
+DEPRECATED: simulation is now part of cosycron.py
 '''
 import sys
 import logging

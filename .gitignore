@@ -2,6 +2,10 @@
 cosy.lock
 cosy.log
 cosy.log.*
+data.log
+data.log.*
+cosycron.err
+cosycron.out
 cosyviz/index.html
 
 # Byte-compiled / optimized / DLL files
