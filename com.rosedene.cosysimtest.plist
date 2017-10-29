@@ -8,6 +8,8 @@
   <key>ProgramArguments</key>
   <array>
     <string>/Users/Clive/rep/cosyhutch/cosycron.py</string>
+    <string>/Users/Clive/rep/cosyhutch/device_sim/</string>
+    <string>/Users/Clive/rep/cosyhutch/logs/</string>
   </array>
 
   <key>Nice</key>
@@ -17,7 +19,7 @@
   <integer>60</integer>
 
   <key>RunAtLoad</key>
-  <true/>
+  <false/>
 
   <key>StandardErrorPath</key>
   <string>/Users/Clive/rep/cosyhutch/cosycron.err</string>

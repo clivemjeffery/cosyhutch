@@ -1,12 +1,4 @@
 import sys
-import logging
-import logging.config
-
-if sys.platform == 'darwin':
-  logging.config.fileConfig('/Users/Clive/rep/cosyhutch/simlog.conf')
-else:
-  logging.config.fileConfig('/home/pi/cosyhutch/logging.conf')
-logger = logging.getLogger('cosylog')
 
 class Sensor():
   def __init__(self, field, file, physical):
