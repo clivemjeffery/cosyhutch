@@ -50,7 +50,10 @@ def main():
   gd_boudoir = ""
 
   print "  Reading data files in %s..." % args.logpath
-  for file in glob.iglob(args.logpath + '/data.*.log'):
+
+  files = glob.glob(args.logpath + '/data.*.log')
+  files.sort(key=os.path.getmtime)  
+  for file in files:
     if not stopfileseen:
       reader = csv.DictReader(open(file, 'rb'), delimiter='\t', fieldnames=['time','outside','lavvy','boudoir','living','status'])
       print "  Opened %s" % file
