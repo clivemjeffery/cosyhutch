@@ -2,3 +2,11 @@ body { font-size: 100% }
 h1 { font-size: 5em; }
 table { border: 5px solid black; }
 td { font-size: 2em; }
+
+.ct-series-a .ct-line {
+  /* Set the colour of this series line */
+  stroke: blue;
+  /* Control the thikness of your lines */
+  stroke-width: 2px;
+  
+}
