@@ -5,9 +5,11 @@ td { font-size: 2em; }
 .legend { color: navy; font-size: 2em; }
 
 .ct-series-a .ct-line {
-  /* Set the colour of this series line */
   stroke: navy;
-  /* Control the thikness of your lines */
   stroke-width: 2px;
-  
+}
+
+.ct-series-b .ct-line {
+  stroke: hotpink;
+  stroke-width: 2px;  
 }

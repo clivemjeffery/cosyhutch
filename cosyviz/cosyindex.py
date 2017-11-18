@@ -90,6 +90,8 @@ def main():
 
   gd_outside = gd_outside[:-2] # remove last comma and newline
   template = template.replace('$graph_series_outside', gd_outside)
+  gd_outside = gd_boudoir[:-2]
+  template = template.replace('$graph_series_boudoir', gd_boudoir)
 
   print "  Writing output file..."
   of.write(template)

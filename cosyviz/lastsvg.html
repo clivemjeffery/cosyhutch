@@ -36,13 +36,19 @@
     new Chartist.Line('.ct-chart', 
       { 
         series: [
-        {
-          name: 'outside',
-          data: [
-            $graph_series_outside
-          ]
-        }
-      ]
+          {
+            name: 'outside',
+            data: [
+              $graph_series_outside
+            ]
+          },
+          {
+            name: 'boudoir',
+            data: [
+              $graph_series_boudoir
+            ]
+          }
+        ]
       },
       {
         showPoint: false,
