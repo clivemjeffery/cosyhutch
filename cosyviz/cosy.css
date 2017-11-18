@@ -1,11 +1,12 @@
-body { font-size: 100% }
+body { font-size: 100%; font-family: arial; }
 h1 { font-size: 5em; }
 table { border: 5px solid black; }
 td { font-size: 2em; }
+.legend { color: navy; font-size: 2em; }
 
 .ct-series-a .ct-line {
   /* Set the colour of this series line */
-  stroke: blue;
+  stroke: navy;
   /* Control the thikness of your lines */
   stroke-width: 2px;
   

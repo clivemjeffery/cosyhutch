@@ -27,7 +27,7 @@
       $time
       $status
     </svg>
-    <div>All temperatures in °C</div>
+    <div class="legend">Temperature (°C)</div>
     <div>
       <div class="ct-chart ct-double-octave"></div>
     </div>
@@ -43,7 +43,9 @@
           ]
         }
       ]
-      }, {
+      },
+      {
+        showPoint: false,
         axisX: {
           type: Chartist.FixedScaleAxis,
           divisor: 5,
