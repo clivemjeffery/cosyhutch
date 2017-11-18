@@ -5,6 +5,9 @@
     <meta http-equiv="refresh" content="60">
     <link rel="stylesheet" type="text/css" href="cosy.css">
     <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/chartist.js/latest/chartist.min.css">
+    <script src="https://cdn.jsdelivr.net/chartist.js/latest/chartist.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/moment@2.19.2/moment.min.js"></script>
     <title>CosyHutch !!</title>
   </head>
   <body>
@@ -24,6 +27,31 @@
       $status
     </svg>
     <div>All temperatures in °C</div>
-    <div><a href="plot.svg"><img src="plot.svg" width="50%"/></a></div>
+    <div>
+      <div class="ct-chart ct-double-octave"></div>
+    </div>
   </body>
+  <script type="application/javascript">
+    new Chartist.Line('.ct-chart', 
+      { 
+        series: [
+        {
+          name: 'outside',
+          data: [
+            $graph_series_outside
+          ]
+        }
+      ]
+      }, {
+        axisX: {
+          type: Chartist.FixedScaleAxis,
+          divisor: 5,
+          labelInterpolationFnc: function(value) {
+            return moment(value).format('HH');
+          }
+        }
+      }
+    );
+
+  </script>
 </html>

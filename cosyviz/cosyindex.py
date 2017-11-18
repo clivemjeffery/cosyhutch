@@ -3,6 +3,7 @@
 A COSYHUTCH script to write an HTML file with latest temperatures.
 '''
 import os
+import glob
 import sys
 import time
 import csv
@@ -37,22 +38,39 @@ def main():
   template = tf.read()
   print "  ...done."
 
-  fn = '%s/data.%s.log' % (args.logpath, datetime.utcnow().strftime('%H'))
-  print "  Creating and opening current data file %s..." % fn
-  reader = csv.DictReader(open(fn, 'rb'), delimiter='\t', fieldnames=['time','outside','lavvy','boudoir','living','status'])
-  print "  ...done."
+  # stop after the file named for the current hour
+  stopfile = '%s/data.%s.log' % (args.logpath, datetime.utcnow().strftime('%H'))
+  print stopfile
+  stopfileseen = False
 
-  rows = 0
-  print "     Reading..."
-  for row in reader:
-    rows = rows + 1
-    datatime = datetime.strptime(row['time'],'%Y-%m-%d %H:%M:%S.%f')
-    outside = float(row['outside'])
-    lavvy = float(row['lavvy'])
-    living = float(row['living'])
-    boudoir = float(row['boudoir'])
-    status = row['status']
-  print "     ...read %i rows." % rows
+  # collect data for the day's graph's series
+  gd_outside = ""
+  gd_lavvy = ""
+  gd_living = ""
+  gd_boudoir = ""
+
+  print "  Reading data files in %s..." % args.logpath
+  for file in glob.iglob(args.logpath + '/data.*.log'):
+    if not stopfileseen:
+      reader = csv.DictReader(open(file, 'rb'), delimiter='\t', fieldnames=['time','outside','lavvy','boudoir','living','status'])
+      print "  Opened %s" % file
+      rows = 0
+      print "     Reading..."
+      for row in reader:
+        rows = rows + 1
+        datatime = datetime.strptime(row['time'],'%Y-%m-%d %H:%M:%S.%f')
+        outside = float(row['outside'])
+        lavvy = float(row['lavvy'])
+        living = float(row['living'])
+        boudoir = float(row['boudoir'])
+        status = row['status']
+        gd_outside = "%s\t{x: new Date('%s'), y: %.2f},\n" % (gd_outside, datatime.strftime('%Y-%m-%dT%H:%M:%S.%fZ'), outside)
+        gd_lavvy = "%s\t{x: new Date('%s'), y: %.2f},\n" % (gd_lavvy, datatime.strftime('%Y-%m-%dT%H:%M:%S.%fZ'), lavvy)
+        gd_living = "%s\t{x: new Date('%s'), y: %.2f},\n" % (gd_living, datatime.strftime('%Y-%m-%dT%H:%M:%S.%fZ'), living)
+        gd_boudoir = "%s\t{x: new Date('%s'), y: %.2f},\n" % (gd_boudoir, datatime.strftime('%Y-%m-%dT%H:%M:%S.%fZ'), boudoir)
+      print "     ...read %i rows." % rows
+      stopfileseen = (file == stopfile)
+    print stopfileseen
 
   print "    Opening output file for write..."
   of = open(args.index, 'w')
@@ -66,6 +84,9 @@ def main():
   template = template.replace('$boudoir', svg_temperature(625, 90, 'Boudoir', boudoir, 'green'))
   template = template.replace('$status', svg_text_in_rect(status,550,220,180,50,5,5,'red'))
   print "  ...done."
+
+  gd_outside = gd_outside[:-2] # remove last comma and newline
+  template = template.replace('$graph_series_outside', gd_outside)
 
   print "  Writing output file..."
   of.write(template)
