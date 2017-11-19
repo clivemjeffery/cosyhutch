@@ -4,22 +4,22 @@ table { border: 5px solid black; }
 td { font-size: 2em; }
 .legend { color: navy; font-size: 2em; }
 
-.ct-series-a .ct-line {
+.ct-series-d .ct-line {
   stroke: orange;
   stroke-width: 2px;
 }
 
-.ct-series-b .ct-line {
+.ct-series-c .ct-line {
   stroke: orchid;
   stroke-width: 2px;  
 }
 
-.ct-series-c .ct-line {
+.ct-series-a .ct-line {
   stroke: dodgerblue;
   stroke-width: 2px;  
 }
 
-.ct-series-d .ct-line {
+.ct-series-b .ct-line {
   stroke: mediumseagreen;
   stroke-width: 2px;  
 }
