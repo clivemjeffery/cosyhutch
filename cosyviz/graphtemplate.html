@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="refresh" content="60">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/chartist.js/latest/chartist.min.css">
+    <script src="https://cdn.jsdelivr.net/chartist.js/latest/chartist.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/moment@2.19.2/moment.min.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="cosy.css">
+    <title>CosyHutch !!</title>
+  </head>
+  <body>
+    <h1>CosyHutch</h1>
+    <table>
+      <tr>
+        <td>Time</td>
+        <td>Outside</td>
+        <td>Lavvy</td>
+        <td>Lounge</td>
+        <td>Boudoir</td>
+        <td>Status</td>
+      </tr>
+      <tr>
+        <td>$time</td>
+        <td>$outside</td>
+        <td>$lavvy</td>
+        <td>$living</td>
+        <td>$boudoir</td>
+        <td>$status</td>
+      <tr>
+    </table>
+    <div>
+      <p class="legend">Temperatures (°C) over the last 24 Hours</p>
+      <div class="ct-chart ct-double-octave"></div>
+    </div>
+  </body>
+  <script type="application/javascript">
+    new Chartist.Line('.ct-chart', 
+      { 
+        series: [
+          {
+            name: 'lavvy',
+            data: [
+              $graph_series_lavvy
+            ]
+          },
+          {
+            name: 'living',
+            data: [
+              $graph_series_living
+            ]
+          },
+          {
+            name: 'boudoir',
+            data: [
+              $graph_series_boudoir
+            ]
+          },
+          {
+            name: 'outside',
+            data: [
+              $graph_series_outside
+            ]
+          }
+        ]
+      },
+      {
+        showPoint: false,
+        axisX: {
+          type: Chartist.FixedScaleAxis,
+          divisor: 5,
+          labelInterpolationFnc: function(value) {
+            return moment(value).format('HH:00 (MMM DD)');
+          }
+        }
+      }
+    );
+
+  </script>
+</html>

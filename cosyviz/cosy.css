@@ -1,8 +1,8 @@
 body { font-size: 100%; font-family: arial; }
 h1 { font-size: 5em; }
-table { border: 5px solid black; }
+table { border: 5px solid black; width: 100%;}
 td { font-size: 2em; }
-.legend { color: navy; font-size: 2em; }
+.legend { color: black; font-size: 2em; }
 
 .ct-series-d .ct-line {
   stroke: orange;
