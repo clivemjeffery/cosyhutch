@@ -81,10 +81,10 @@ def main():
 
   print "  Replacing tags in template..."
   template = template.replace('$time', svg_text_in_rect(datatime.strftime("%I:%M %p"),615,5,180,50,5,5))
-  template = template.replace('$outside', svg_temperature(50, 250, 'Outside', outside, 'cyan'))
-  template = template.replace('$lavvy', svg_temperature(75, 100, 'Lavatory', lavvy, 'blue'))
-  template = template.replace('$living', svg_temperature(260, 80, 'Lounge', living, 'wheat'))
-  template = template.replace('$boudoir', svg_temperature(625, 90, 'Boudoir', boudoir, 'green'))
+  template = template.replace('$outside', svg_temperature(50, 250, 'Outside', outside, 'orange'))
+  template = template.replace('$lavvy', svg_temperature(75, 100, 'Lavatory', lavvy, 'dodgerblue'))
+  template = template.replace('$living', svg_temperature(260, 80, 'Lounge', living, 'mediumseagreen'))
+  template = template.replace('$boudoir', svg_temperature(625, 90, 'Boudoir', boudoir, 'orchid'))
   template = template.replace('$status', svg_text_in_rect(status,550,220,180,50,5,5,'red'))
   print "  ...done."
 
@@ -92,6 +92,10 @@ def main():
   template = template.replace('$graph_series_outside', gd_outside)
   gd_outside = gd_boudoir[:-2]
   template = template.replace('$graph_series_boudoir', gd_boudoir)
+  gd_outside = gd_boudoir[:-2]
+  template = template.replace('$graph_series_lavvy', gd_lavvy)
+  gd_outside = gd_boudoir[:-2]
+  template = template.replace('$graph_series_living', gd_living)
 
   print "  Writing output file..."
   of.write(template)
