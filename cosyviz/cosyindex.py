@@ -88,12 +88,12 @@ def main():
   print "    ...done."
 
   print "  Replacing tags in template..."
-  template = template.replace('$time', txt_text_in_rect(datatime.strftime("%I:%M %p"),615,5,180,50,5,5))
-  template = template.replace('$outside', txt_temperature(50, 250, 'Outside', outside, 'orange'))
-  template = template.replace('$lavvy', txt_temperature(75, 100, 'Lavatory', lavvy, 'dodgerblue'))
-  template = template.replace('$living', txt_temperature(260, 80, 'Lounge', living, 'mediumseagreen'))
-  template = template.replace('$boudoir', txt_temperature(625, 90, 'Boudoir', boudoir, 'orchid'))
-  template = template.replace('$status', txt_text_in_rect(status,550,220,180,50,5,5,'red'))
+  template = template.replace('$time', svg_text_in_rect(datatime.strftime("%I:%M %p"),615,5,180,50,5,5))
+  template = template.replace('$outside', svg_temperature(50, 250, 'Outside', outside, 'orange'))
+  template = template.replace('$lavvy', svg_temperature(75, 100, 'Lavatory', lavvy, 'dodgerblue'))
+  template = template.replace('$living', svg_temperature(260, 80, 'Lounge', living, 'mediumseagreen'))
+  template = template.replace('$boudoir', svg_temperature(625, 90, 'Boudoir', boudoir, 'orchid'))
+  template = template.replace('$status', svg_text_in_rect(status,550,220,180,50,5,5,'red'))
   print "  ...done."
 
   gd_outside = gd_outside[:-2] # remove last comma and newline
