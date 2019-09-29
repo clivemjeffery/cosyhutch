@@ -21,7 +21,7 @@ def svg_text_in_rect(caption, x, y, w, h, radius=0, stroke_width=2, stroke='blac
 
 def txt_text_in_rect(caption, x, y, w, h, radius=0, stroke_width=2, stroke='black', fill='white'):
   txt = '<span style="color:%s;">%s</span>' % (stroke, caption)
-  return txt 
+  return txt
 
 def svg_temperature(x, y, caption, temperature, stroke='blue'):
   svg = svg_rect(x, y, 100, 50, 5, 5, stroke, 'black')
@@ -32,7 +32,7 @@ def svg_temperature(x, y, caption, temperature, stroke='blue'):
 def txt_temperature(x, y, caption, temperature, stroke='blue'):
   txt = '<span style="color:%s;">%.1f</span>' % (stroke, temperature)
   return txt
-  
+
 def main():
   parser = argparse.ArgumentParser()
   parser.add_argument("template", help='template file to read.')
@@ -48,7 +48,7 @@ def main():
 
   # stop after the file named for the current hour
   stopfile = '%s/data.%s.log' % (args.logpath, datetime.utcnow().strftime('%H'))
-  print stopfile
+  print "  Stopfile is %s" % stopfile
   stopfileseen = False
 
   # collect data for the day's graph's series
@@ -60,28 +60,31 @@ def main():
   print "  Reading data files in %s..." % args.logpath
 
   files = glob.glob(args.logpath + '/data.*.log')
-  files.sort(key=os.path.getmtime)  
+  files.sort(key=os.path.getmtime)
   for file in files:
     if not stopfileseen:
       reader = csv.DictReader(open(file, 'rb'), delimiter='\t', fieldnames=['time','outside','lavvy','boudoir','living','status'])
       print "  Opened %s" % file
       rows = 0
       print "     Reading..."
-      for row in reader:
-        rows = rows + 1
-        datatime = datetime.strptime(row['time'],'%Y-%m-%d %H:%M:%S.%f')
-        outside = float(row['outside'])
-        lavvy = float(row['lavvy'])
-        living = float(row['living'])
-        boudoir = float(row['boudoir'])
-        status = row['status']
-        gd_outside = "%s\t{x: new Date('%s'), y: %.2f},\n" % (gd_outside, datatime.strftime('%Y-%m-%dT%H:%M:%S.%fZ'), outside)
-        gd_lavvy = "%s\t{x: new Date('%s'), y: %.2f},\n" % (gd_lavvy, datatime.strftime('%Y-%m-%dT%H:%M:%S.%fZ'), lavvy)
-        gd_living = "%s\t{x: new Date('%s'), y: %.2f},\n" % (gd_living, datatime.strftime('%Y-%m-%dT%H:%M:%S.%fZ'), living)
-        gd_boudoir = "%s\t{x: new Date('%s'), y: %.2f},\n" % (gd_boudoir, datatime.strftime('%Y-%m-%dT%H:%M:%S.%fZ'), boudoir)
+      try:
+        for row in reader:
+          rows = rows + 1
+          datatime = datetime.strptime(row['time'],'%Y-%m-%d %H:%M:%S.%f')
+          outside = float(row['outside'])
+          lavvy = float(row['lavvy'])
+          living = float(row['living'])
+          boudoir = float(row['boudoir'])
+          status = row['status']
+          gd_outside = "%s\t{x: new Date('%s'), y: %.2f},\n" % (gd_outside, datatime.strftime('%Y-%m-%dT%H:%M:%S.%fZ'), outside)
+          gd_lavvy = "%s\t{x: new Date('%s'), y: %.2f},\n" % (gd_lavvy, datatime.strftime('%Y-%m-%dT%H:%M:%S.%fZ'), lavvy)
+          gd_living = "%s\t{x: new Date('%s'), y: %.2f},\n" % (gd_living, datatime.strftime('%Y-%m-%dT%H:%M:%S.%fZ'), living)
+          gd_boudoir = "%s\t{x: new Date('%s'), y: %.2f},\n" % (gd_boudoir, datatime.strftime('%Y-%m-%dT%H:%M:%S.%fZ'), boudoir)
+      except csv.Error:
+        print('csv choked on row %i' % (rows))
       print "     ...read %i rows." % rows
       stopfileseen = (file == stopfile)
-    print stopfileseen
+    print "  Stopfile seen? %s" % stopfileseen
 
   print "    Opening output file for write..."
   of = open(args.index, 'w')
