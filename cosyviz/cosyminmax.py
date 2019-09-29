@@ -75,12 +75,27 @@ def main():
 
   print "  24 hour range is %s" % range24Hour.to_s()
 
-  print "    Opening output file for write..."
-  of = open(args.outfile, 'w')
+  print "    Opening output file to append..."
+  of = open(args.outfile, 'a')
   print "    ...opened."
 
-  of.write("something")
-  print "  ...wrote something."
+  if range24Hour.minTime == range24Hour.maxTime:
+    of.write('%s\t' % range24Hour.minTime.strftime('%Y-%m-%dT%H:%M:%S.%fZ'))
+    of.write('%.2f\n' % range24Hour.min)
+  else:
+    if range24Hour.minTime < range24Hour.maxTime:
+      of.write('%s\t' % range24Hour.minTime.strftime('%Y-%m-%dT%H:%M:%S.%fZ'))
+      of.write('%.2f\n' % range24Hour.min)
+      of.write('%s\t' % range24Hour.maxTime.strftime('%Y-%m-%dT%H:%M:%S.%fZ'))
+      of.write('%.2f\n' % range24Hour.max)
+    else:
+      of.write('%s\t' % range24Hour.maxTime.strftime('%Y-%m-%dT%H:%M:%S.%fZ'))
+      of.write('%.2f\n' % range24Hour.max)
+      of.write('%s\t' % range24Hour.minTime.strftime('%Y-%m-%dT%H:%M:%S.%fZ'))
+      of.write('%.2f\n' % range24Hour.min)
+
+  of.close()
+  print "  ...appended data."
 
   print "Ended."
 
