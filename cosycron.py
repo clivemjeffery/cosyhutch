@@ -38,8 +38,8 @@ def sendData(status):
   else:
     values = {'api_key' : THINGSPEAKKEY, 'status' : status}
     temperatures = {}
-    for sensor in SENSORS:
-      temperatures[sensor.field] = sensor.temperature
+    temperatures['field1'] = SENSORS[0].temperature
+    temperatures['field3'] = SENSORS[2].temperature
 
     logger.debug("sendData - temperatures: %s", temperatures)
     values.update(temperatures)
@@ -47,7 +47,7 @@ def sendData(status):
     
     postdata = urllib.urlencode(values)
     req = urllib2.Request(THINGSPEAKURL, postdata)
-    logger.debug('Posting to thingspeak.')
+    logger.debug("Posting to thingspeak - %s" % postdata)
     response = urllib2.urlopen(req, None, 5)
     html_string = response.read()
     response.close()
@@ -60,7 +60,7 @@ def create_logger(logpath):
   # The above also helps out open_data_logfile, bad coupling but meh
 
   logger = logging.getLogger('cosylog')
-  logger.setLevel(logging.ERROR)
+  logger.setLevel(logging.DEBUG)
   ch = logging.handlers.RotatingFileHandler(logpath + "/cosy.log",'a',2097152,10)
   chf = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
   ch.setFormatter(chf)
@@ -146,7 +146,7 @@ def main():
   logfile.close()
 
   try:
-    sendData(status)
+    sendData(heat_status)
   except Exception:
     logger.exception('Error sending data.')
 
