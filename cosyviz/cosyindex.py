@@ -72,7 +72,7 @@ def main():
           rows = rows + 1
           datatime = datetime.strptime(row['time'],'%Y-%m-%d %H:%M:%S.%f')
           outside = float(row['outside'])
-          lavvy = float(row['lavvy'])
+          lavvy = 0.0 # float(row['lavvy'])
           living = float(row['living'])
           boudoir = float(row['boudoir'])
           status = row['status']
@@ -101,11 +101,11 @@ def main():
 
   gd_outside = gd_outside[:-2] # remove last comma and newline
   template = template.replace('$graph_series_outside', gd_outside)
-  gd_outside = gd_boudoir[:-2]
+  gd_boudoir = gd_boudoir[:-2]
   template = template.replace('$graph_series_boudoir', gd_boudoir)
-  gd_outside = gd_boudoir[:-2]
+  gd_lavvy = gd_lavvy[:-2]
   template = template.replace('$graph_series_lavvy', gd_lavvy)
-  gd_outside = gd_boudoir[:-2]
+  gd_living = gd_living[:-2]
   template = template.replace('$graph_series_living', gd_living)
 
   print "  Writing output file..."

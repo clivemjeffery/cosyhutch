@@ -21,7 +21,6 @@
         CosyHutch
       </text>
       $outside
-      $lavvy
       $living
       $boudoir
       $time
@@ -29,19 +28,13 @@
     </svg>
     <div class="legend">Temperature (°C)</div>
     <div>
-      <div class="ct-chart ct-double-octave"></div>
+      <div class="ct-chart ct-square"></div>
     </div>
   </body>
   <script type="application/javascript">
     new Chartist.Line('.ct-chart', 
       { 
         series: [
-          {
-            name: 'lavvy',
-            data: [
-              $graph_series_lavvy
-            ]
-          },
           {
             name: 'living',
             data: [

@@ -10,16 +10,16 @@ td { font-size: 2em; }
 }
 
 .ct-series-c .ct-line {
-  stroke: orchid;
+  stroke: orange;
   stroke-width: 2px;  
 }
 
 .ct-series-a .ct-line {
-  stroke: dodgerblue;
+  stroke: mediumseagreen;
   stroke-width: 2px;  
 }
 
 .ct-series-b .ct-line {
-  stroke: mediumseagreen;
+  stroke: orchid;
   stroke-width: 2px;  
 }

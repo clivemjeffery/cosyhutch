@@ -60,7 +60,7 @@ def create_logger(logpath):
   # The above also helps out open_data_logfile, bad coupling but meh
 
   logger = logging.getLogger('cosylog')
-  logger.setLevel(logging.DEBUG)
+  logger.setLevel(logging.ERROR)
   ch = logging.handlers.RotatingFileHandler(logpath + "/cosy.log",'a',2097152,10)
   chf = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
   ch.setFormatter(chf)
